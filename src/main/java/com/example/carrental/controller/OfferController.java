@@ -3,7 +3,6 @@ package com.example.carrental.controller;
 import com.example.carrental.dto.OfferRequest;
 import com.example.carrental.model.Offer;
 import com.example.carrental.service.OfferService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +22,13 @@ public class OfferController {
 
     // 📌 Създаване на нова оферта (Приема JSON с OfferRequest)
     @PostMapping
-    public ResponseEntity<Offer> createOffer(@Valid @RequestBody OfferRequest request) {
-        Offer offer = offerService.createOffer(request.getCustomerId(), request.getCarId(), request.getRentalDays());
-        return ResponseEntity.status(HttpStatus.CREATED).body(offer);
+    public ResponseEntity<?> createOffer(@RequestBody OfferRequest request) {
+        try {
+            Offer offer = offerService.createOffer(request.getCustomerId(), request.getCarId(), request.getRentalDays());
+            return ResponseEntity.status(HttpStatus.CREATED).body(offer);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Грешка при създаване на оферта: " + e.getMessage());
+        }
     }
 
     // 📌 Взимане на оферта по ID

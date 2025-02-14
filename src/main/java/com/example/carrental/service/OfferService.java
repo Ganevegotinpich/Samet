@@ -30,36 +30,38 @@ public class OfferService {
     }
 
     public Offer createOffer(Long customerId, Long carId, int rentalDays) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Клиентът не е намерен!"));
+        try {
+            Customer customer = customerRepository.findById(customerId)
+                    .orElseThrow(() -> new RuntimeException("Клиентът не е намерен!"));
 
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Автомобилът не е намерен!"));
+            Car car = carRepository.findById(carId)
+                    .orElseThrow(() -> new RuntimeException("Автомобилът не е намерен!"));
 
-        if (!car.getAvailable()) {
-            throw new RuntimeException("Този автомобил не е наличен!");
+            if (!car.isAvailable()) {
+                throw new RuntimeException("Този автомобил не е наличен!");
+            }
+
+            double totalPrice = car.getPricePerDay() * rentalDays;
+
+            if (customer.getHasAccidents()) {
+                totalPrice += 200;
+            }
+
+            Offer offer = new Offer(customer, car, LocalDate.now(), rentalDays, totalPrice, false);
+            return offerRepository.save(offer);
+        } catch (Exception e) {
+            logger.error("Грешка при създаване на оферта", e);
+            throw new RuntimeException("Неуспешно създаване на оферта: " + e.getMessage());
         }
-
-        double totalPrice = car.getPricePerDay() * rentalDays;
-
-        if (customer.getHasAccidents()) {
-            totalPrice += 200;
-        }
-
-        Offer offer = new Offer(customer, car, LocalDate.now(), rentalDays, totalPrice, false);
-        return offerRepository.save(offer);
     }
-
 
     public Optional<Offer> getOfferById(Long offerId) {
         return offerRepository.findById(offerId);
     }
 
-
     public List<Offer> getOffersByCustomer(Long customerId) {
         return offerRepository.findByCustomerId(customerId);
     }
-
 
     public void deleteOffer(Long offerId) {
         offerRepository.findById(offerId).ifPresent(offer -> {

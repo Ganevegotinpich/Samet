@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CarRepository extends JpaRepository<Car, Long> {
     List<Car> findByLocation(String location);
+
 }

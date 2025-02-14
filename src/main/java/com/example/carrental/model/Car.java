@@ -19,7 +19,8 @@ public class Car {
     @Column(nullable = false)
     private String location; // София, Пловдив, Варна, Бургас
 
-    @Column(nullable = false)
+
+    @Column(name = "price_per_day", nullable = false)
     private Double pricePerDay;
 
     @Column(nullable = false)
@@ -37,6 +38,7 @@ public class Car {
     public Double getPricePerDay() { return pricePerDay; }
     public void setPricePerDay(Double pricePerDay) { this.pricePerDay = pricePerDay; }
 
-    public Boolean getAvailable() { return available; }
-    public void setAvailable(Boolean available) { this.available = available; }
+    public boolean isAvailable() { return available; }
+    public void setAvailable(boolean available) { this.available = available; }
+
 }
