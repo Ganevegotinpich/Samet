@@ -55,5 +55,21 @@ public class CarService {
         }
         carRepository.deleteById(id);
     }
-}
 
+    // New method to calculate price
+    public double calculatePrice(Car car, int rentalDays, boolean hasAccidents) {
+        double totalPrice = car.getPricePerDay() * rentalDays;
+
+        // Apply weekend surcharge
+        if (rentalDays > 1 && rentalDays % 7 == 0) {  // If over a weekend
+            totalPrice *= 1.1;
+        }
+
+        // Add surcharge if the customer has accidents
+        if (hasAccidents) {
+            totalPrice += 200;
+        }
+
+        return totalPrice;
+    }
+}

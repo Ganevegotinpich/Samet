@@ -22,36 +22,39 @@ public class OfferService {
     private final OfferRepository offerRepository;
     private final CustomerRepository customerRepository;
     private final CarRepository carRepository;
+    private final CarService carService;
 
-    public OfferService(OfferRepository offerRepository, CustomerRepository customerRepository, CarRepository carRepository) {
+    public OfferService(OfferRepository offerRepository, CustomerRepository customerRepository, CarRepository carRepository, CarService carService) {
         this.offerRepository = offerRepository;
         this.customerRepository = customerRepository;
         this.carRepository = carRepository;
+        this.carService = carService;
     }
 
+    @Transactional
     public Offer createOffer(Long customerId, Long carId, int rentalDays) {
         try {
             Customer customer = customerRepository.findById(customerId)
-                    .orElseThrow(() -> new RuntimeException("Клиентът не е намерен!"));
+                    .orElseThrow(() -> new RuntimeException("Customer not found!"));
 
             Car car = carRepository.findById(carId)
-                    .orElseThrow(() -> new RuntimeException("Автомобилът не е намерен!"));
+                    .orElseThrow(() -> new RuntimeException("Car not found!"));
 
             if (!car.isAvailable()) {
-                throw new RuntimeException("Този автомобил не е наличен!");
+                throw new RuntimeException("This car is not available!");
             }
 
-            double totalPrice = car.getPricePerDay() * rentalDays;
-
-            if (customer.getHasAccidents()) {
-                totalPrice += 200;
-            }
+            double totalPrice = carService.calculatePrice(car, rentalDays, customer.getHasAccidents());
 
             Offer offer = new Offer(customer, car, LocalDate.now(), rentalDays, totalPrice, false);
-            return offerRepository.save(offer);
+
+            Offer savedOffer = offerRepository.save(offer);
+            logger.info("Offer created successfully: {}", savedOffer);
+
+            return savedOffer;
         } catch (Exception e) {
-            logger.error("Грешка при създаване на оферта", e);
-            throw new RuntimeException("Неуспешно създаване на оферта: " + e.getMessage());
+            logger.error("Error creating offer", e);
+            throw new RuntimeException("Failed to create offer: " + e.getMessage());
         }
     }
 

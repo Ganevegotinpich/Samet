@@ -17,7 +17,7 @@ CREATE TABLE cars (
 );
 
 -- Създаване на таблица за оферти
-CREATE TABLE offers (
+CREATE TABLE offer (
                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
                         car_id BIGINT NOT NULL,
                         customer_id BIGINT NOT NULL,

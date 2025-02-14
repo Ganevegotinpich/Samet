@@ -1,10 +1,8 @@
-POST http://localhost:8080/cars
+POST http://localhost:8080/offers
 Content-Type: application/json
 
 {
-  "brand": "Tesla",
-  "model": "Model 3",
-  "location": "Sofia",
-  "pricePerDay": 99.99,
-  "available": true
+  "customerId": 1,
+  "carId": 1,
+  "rentalDays": 5
 }
