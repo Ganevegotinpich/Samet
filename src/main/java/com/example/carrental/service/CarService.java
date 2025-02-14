@@ -16,22 +16,18 @@ public class CarService {
         this.carRepository = carRepository;
     }
 
-    // Листване на всички автомобили по локация
     public List<Car> getCarsByLocation(String location) {
         return carRepository.findByLocation(location);
     }
 
-    // Листване на конкретен автомобил по ID
     public Optional<Car> getCarById(Long id) {
         return carRepository.findById(id);
     }
 
-    // Добавяне на нов автомобил
     public Car addCar(Car car) {
         return carRepository.save(car);
     }
 
-    // Актуализация на съществуващ автомобил
     public Car updateCar(Long id, Car updatedCar) {
         return carRepository.findById(id).map(car -> {
             car.setBrand(updatedCar.getBrand());
@@ -43,7 +39,6 @@ public class CarService {
         }).orElseThrow(() -> new RuntimeException("Автомобилът не е намерен!"));
     }
 
-    // Изтриване на автомобил (мека изтриване - просто го правим "неактивен")
     public void deleteCar(Long id) {
         carRepository.findById(id).ifPresent(car -> {
             car.setAvailable(false);

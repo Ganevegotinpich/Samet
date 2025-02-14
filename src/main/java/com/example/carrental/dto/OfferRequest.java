@@ -1,54 +1,33 @@
 package com.example.carrental.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class OfferRequest {
+
+    @NotNull(message = "customerId е задължителен")
     private Long customerId;
+
+    @NotNull(message = "carId е задължителен")
     private Long carId;
+
+    @Min(value = 1, message = "rentalDays трябва да е поне 1")
     private int rentalDays;
 
-    // Празен конструктор (нужен за JSON парсване)
-    public OfferRequest() {
-    }
+    public OfferRequest() {}
 
-    // Пълен конструктор
     public OfferRequest(Long customerId, Long carId, int rentalDays) {
         this.customerId = customerId;
         this.carId = carId;
         this.rentalDays = rentalDays;
     }
 
-    // Getter-и
-    public Long getCustomerId() {
-        return customerId;
-    }
+    public Long getCustomerId() { return customerId; }
+    public void setCustomerId(Long customerId) { this.customerId = customerId; }
 
-    public Long getCarId() {
-        return carId;
-    }
+    public Long getCarId() { return carId; }
+    public void setCarId(Long carId) { this.carId = carId; }
 
-    public int getRentalDays() {
-        return rentalDays;
-    }
-
-    // Setter-и
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public void setCarId(Long carId) {
-        this.carId = carId;
-    }
-
-    public void setRentalDays(int rentalDays) {
-        this.rentalDays = rentalDays;
-    }
-
-    // toString метод за дебъгване
-    @Override
-    public String toString() {
-        return "OfferRequest{" +
-                "customerId=" + customerId +
-                ", carId=" + carId +
-                ", rentalDays=" + rentalDays +
-                '}';
-    }
+    public int getRentalDays() { return rentalDays; }
+    public void setRentalDays(int rentalDays) { this.rentalDays = rentalDays; }
 }

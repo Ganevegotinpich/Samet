@@ -3,10 +3,11 @@ package com.example.carrental.controller;
 import com.example.carrental.dto.OfferRequest;
 import com.example.carrental.model.Offer;
 import com.example.carrental.service.OfferService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,32 +21,40 @@ public class OfferController {
         this.offerService = offerService;
     }
 
+    // 📌 Създаване на нова оферта (Приема JSON с OfferRequest)
     @PostMapping
-    public ResponseEntity<Offer> createOffer(@RequestBody OfferRequest offerRequest) {
-        Offer newOffer = offerService.createOffer(
-                offerRequest.getCustomerId(),
-                offerRequest.getCarId(),
-                offerRequest.getRentalDays()
-        );
-        return ResponseEntity.created(URI.create("/offers/" + newOffer.getId())).body(newOffer);
+    public ResponseEntity<Offer> createOffer(@Valid @RequestBody OfferRequest request) {
+        Offer offer = offerService.createOffer(request.getCustomerId(), request.getCarId(), request.getRentalDays());
+        return ResponseEntity.status(HttpStatus.CREATED).body(offer);
     }
 
+    // 📌 Взимане на оферта по ID
+    @GetMapping("/{offerId}")
+    public ResponseEntity<Offer> getOfferById(@PathVariable Long offerId) {
+        return offerService.getOfferById(offerId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+    }
+
+    // 📌 Взимане на всички оферти за клиент
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<Offer>> getOffersByCustomer(@PathVariable Long customerId) {
         List<Offer> offers = offerService.getOffersByCustomer(customerId);
-        if (offers.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(offers);
     }
 
+    // 📌 Приемане на оферта (активиране)
     @PutMapping("/{offerId}/accept")
     public ResponseEntity<Offer> acceptOffer(@PathVariable Long offerId) {
-        Optional<Offer> offer = offerService.getOfferById(offerId);
-        if (offer.isPresent()) {
-            Offer updatedOffer = offerService.acceptOffer(offerId);
-            return ResponseEntity.ok(updatedOffer);
-        }
-        return ResponseEntity.notFound().build();
+        Optional<Offer> acceptedOffer = offerService.acceptOffer(offerId);
+        return acceptedOffer.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // 📌 Меко изтриване на оферта (деактивиране)
+    @DeleteMapping("/{offerId}")
+    public ResponseEntity<Void> deleteOffer(@PathVariable Long offerId) {
+        offerService.deleteOffer(offerId);
+        return ResponseEntity.noContent().build();
     }
 }

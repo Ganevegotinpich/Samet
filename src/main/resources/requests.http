@@ -1,1 +1,2 @@
-PUT http://localhost:8080/offers/1/accept
+GET http://localhost:8080/actuator/health
+

@@ -1,12 +1,9 @@
 package com.example.carrental.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "cars")
-@NoArgsConstructor
-@AllArgsConstructor
 public class Car {
 
     @Id
@@ -28,7 +25,6 @@ public class Car {
     @Column(nullable = false)
     private Boolean available;
 
-    // 👉 Добавяме ръчно getter-и и setter-и (ако Lombok не работи)
     public String getBrand() { return brand; }
     public void setBrand(String brand) { this.brand = brand; }
 
